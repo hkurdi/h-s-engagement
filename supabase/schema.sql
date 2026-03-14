@@ -1,13 +1,12 @@
-create extension if not exists "uuid-ossp";
+create extension if not exists pgcrypto;
 
-create table if not exists rsvps (
-  id uuid primary key default uuid_generate_v4(),
+create table if not exists public.rsvps (
+  id uuid primary key default gen_random_uuid(),
   full_name text not null,
   phone_number text not null unique,
   guest_count integer not null check (guest_count >= 1),
-  additional_guest_names jsonb not null default '[]'::jsonb,
+  additional_guest_names text[] not null default '{}',
   created_at timestamptz not null default now()
 );
 
-create index if not exists rsvps_phone_number_idx on rsvps(phone_number);
-create index if not exists rsvps_created_at_idx on rsvps(created_at desc);
+create index if not exists rsvps_created_at_idx on public.rsvps (created_at desc);
